@@ -27,38 +27,38 @@ public class TestCaseVisitor extends ModifierVisitor<Void> {
 
         md.setBody(new BlockStmt().setStatements(
                 new NodeList<Statement>(
-                        StaticJavaParser.parseStatement("MetricRegistry reg = new MetricRegistry();"),
-                        StaticJavaParser.parseStatement("MemoryUsageGaugeSet mGs = new MemoryUsageGaugeSet();"),
-                        StaticJavaParser.parseStatement("ThreadStateGaugeSet tGs = new ThreadStatesGaugeSet();"),
-                        StaticJavaParser.parseStatement("ClassLoadingGaugeSet cGs = new ClassLoadingGaugeSet();"),
-                        StaticJavaParser.parseStatement("JvmAttributeGaugeSet jvmGs = new JvmAttributeGaugeSet();"),
-                        StaticJavaParser.parseStatement("GarbageCollectorMetricSet gMs = new GarbageCollectorMetricSet();"),
-                        StaticJavaParser.parseStatement("reg.registerAll(mGs);"),
-                        StaticJavaParser.parseStatement("reg.registerAll(tGs);"),
-                        StaticJavaParser.parseStatement("reg.registerAll(cGs);"),
-                        StaticJavaParser.parseStatement("reg.registerAll(jvmGs);"),
-                        StaticJavaParser.parseStatement("reg.registerAll(gMs);"),
-                        StaticJavaParser.parseStatement("StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();"),
-                        StaticJavaParser.parseStatement("StackTraceElement e = stacktrace[1];"),
-                        StaticJavaParser.parseStatement("String methodName = e.getMethodName();"),
-                        StaticJavaParser.parseStatement("String className = MethodHandles.lookup().lookupClass().getSimpleName();"),
-                        StaticJavaParser.parseStatement("String packageName = MethodHandles.lookup().lookupClass().getPackage().getName();"),
-                        StaticJavaParser.parseStatement("String output = \"\\n\" + packageName + \".\" + className + \".\" + methodName;"),
-                        StaticJavaParser.parseStatement("identifier = output;"),
-                        StaticJavaParser.parseStatement("output = output + \",before\";"),
-                        StaticJavaParser.parseStatement("Iterator<String> iterator = reg.getGauges().keySet().iterator();"),
-                        new WhileStmt().setCondition(StaticJavaParser.parseExpression("iterator.hasNext()")).setBody(
+                        StaticJavaParser.parseStatement("MetricRegistry chribirreg = new MetricRegistry();"),
+                        StaticJavaParser.parseStatement("MemoryUsageGaugeSet chribirmGs = new MemoryUsageGaugeSet();"),
+                        StaticJavaParser.parseStatement("ThreadStatesGaugeSet chribirtGs = new ThreadStatesGaugeSet();"),
+                        StaticJavaParser.parseStatement("ClassLoadingGaugeSet chribircGs = new ClassLoadingGaugeSet();"),
+                        StaticJavaParser.parseStatement("JvmAttributeGaugeSet chribirjvmGs = new JvmAttributeGaugeSet();"),
+                        StaticJavaParser.parseStatement("GarbageCollectorMetricSet chribirgMs = new GarbageCollectorMetricSet();"),
+                        StaticJavaParser.parseStatement("chribirreg.registerAll(chribirmGs);"),
+                        StaticJavaParser.parseStatement("chribirreg.registerAll(chribirtGs);"),
+                        StaticJavaParser.parseStatement("chribirreg.registerAll(chribircGs);"),
+                        StaticJavaParser.parseStatement("chribirreg.registerAll(chribirjvmGs);"),
+                        StaticJavaParser.parseStatement("chribirreg.registerAll(chribirgMs);"),
+                        StaticJavaParser.parseStatement("StackTraceElement[] chribirstacktrace = Thread.currentThread().getStackTrace();"),
+                        StaticJavaParser.parseStatement("StackTraceElement chribire = chribirstacktrace[1];"),
+                        StaticJavaParser.parseStatement("String chribirmethodName = chribire.getMethodName();"),
+                        StaticJavaParser.parseStatement("String chribirclassName = MethodHandles.lookup().lookupClass().getSimpleName();"),
+                        StaticJavaParser.parseStatement("String chribirpackageName = MethodHandles.lookup().lookupClass().getPackage().getName();"),
+                        StaticJavaParser.parseStatement("String chribiroutput = \"\\n\" + chribirpackageName + \".\" + chribirclassName + \".\" + chribirmethodName;"),
+                        StaticJavaParser.parseStatement("String chribiridentifier = chribiroutput;"),
+                        StaticJavaParser.parseStatement("chribiroutput = chribiroutput + \",before\";"),
+                        StaticJavaParser.parseStatement("Iterator<String> chribiriterator = chribirreg.getGauges().keySet().iterator();"),
+                        new WhileStmt().setCondition(StaticJavaParser.parseExpression("chribiriterator.hasNext()")).setBody(
                                 new BlockStmt().setStatements(new NodeList<Statement>(
-                                        StaticJavaParser.parseStatement("String key   = iterator.next();"),
-                                        StaticJavaParser.parseStatement("String value = reg.getGauges().get(key).getValue().toString();"),
-                                        StaticJavaParser.parseStatement("output = output + \",\" + value;")
+                                        StaticJavaParser.parseStatement("String chribirkey   = chribiriterator.next();"),
+                                        StaticJavaParser.parseStatement("String chribirvalue = chribirreg.getGauges().get(chribirkey).getValue().toString();"),
+                                        StaticJavaParser.parseStatement("chribiroutput = chribiroutput + \",\" + chribirvalue;")
                                 ))
                         ),
                         new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                                StaticJavaParser.parseStatement("FileWriter csvWriter = new FileWriter(\"/home/christian/Desktop/data/test.csv\", true);"),
-                                StaticJavaParser.parseStatement("csvWriter.append(output);"),
-                                StaticJavaParser.parseStatement("csvWriter.close();")
-                        ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("ex"))))
+                                StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\"/home/christian/Desktop/data/test.csv\", true);"),
+                                StaticJavaParser.parseStatement("chribircsvWriter.append(chribiroutput);"),
+                                StaticJavaParser.parseStatement("chribircsvWriter.close();")
+                        ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex"))))
                         )));
 
         // append the old method body
@@ -72,21 +72,21 @@ public class TestCaseVisitor extends ModifierVisitor<Void> {
         NodeList<Statement> oldStmts = md.getBody().get().getStatements();
 
         oldStmts.addAll(new NodeList<Statement>(
-                StaticJavaParser.parseStatement("output = identifier;"),
-                StaticJavaParser.parseStatement("output = output + \",after\";"),
-                StaticJavaParser.parseStatement("iterator = reg.getGauges().keySet().iterator();"),
-                new WhileStmt().setCondition(StaticJavaParser.parseExpression("iterator.hasNext()")).setBody(
+                StaticJavaParser.parseStatement("chribiroutput = chribiridentifier;"),
+                StaticJavaParser.parseStatement("chribiroutput = chribiroutput + \",after\";"),
+                StaticJavaParser.parseStatement("chribiriterator = chribirreg.getGauges().keySet().iterator();"),
+                new WhileStmt().setCondition(StaticJavaParser.parseExpression("chribiriterator.hasNext()")).setBody(
                         new BlockStmt().setStatements(new NodeList<Statement>(
-                                StaticJavaParser.parseStatement("String key   = iterator.next();"),
-                                StaticJavaParser.parseStatement("String value = reg.getGauges().get(key).getValue().toString();"),
-                                StaticJavaParser.parseStatement("output = output + \",\" + value;")
+                                StaticJavaParser.parseStatement("String chribirkey   = chribiriterator.next();"),
+                                StaticJavaParser.parseStatement("String chribirvalue = chribirreg.getGauges().get(chribirkey).getValue().toString();"),
+                                StaticJavaParser.parseStatement("chribiroutput = chribiroutput + \",\" + chribirvalue;")
                         ))
                 ),
                 new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                        StaticJavaParser.parseStatement("FileWriter csvWriter = new FileWriter(\"/home/christian/Desktop/data/test.csv\", true);"),
-                        StaticJavaParser.parseStatement("csvWriter.append(output);"),
-                        StaticJavaParser.parseStatement("csvWriter.close();")
-                ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("ex"))))
+                        StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\"/home/christian/Desktop/data/test.csv\", true);"),
+                        StaticJavaParser.parseStatement("chribircsvWriter.append(chribiroutput);"),
+                        StaticJavaParser.parseStatement("chribircsvWriter.close();")
+                ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex"))))
         ));
 
     }
