@@ -10,7 +10,9 @@ public class TestDirectoryVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         // avoid traversing src/main/
-        if (dir.getFileName().toString().equals("main") || dir.getFileName().toString().equals(".idea") || dir.getFileName().toString().equals(".git")) {
+        if (dir.getFileName().toString().equals("main") ||
+                dir.getFileName().toString().equals(".idea") ||
+                dir.getFileName().toString().equals(".git")) {
             return FileVisitResult.SKIP_SUBTREE;
         }
         return FileVisitResult.CONTINUE;
