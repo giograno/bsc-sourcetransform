@@ -13,12 +13,15 @@ public class TestCaseVisitor extends ModifierVisitor<Void> {
     @Override
     public Visitable visit(MethodDeclaration md, Void arg) {
         super.visit(md, arg);
+        if (!md.getAnnotationByName("Test").isPresent()) return md;
         addBefore(md);
         addAfter(md);
         return md;
     }
 
     private void addBefore(MethodDeclaration md) {
+
+        if (!md.getBody().isPresent()) return;
 
         NodeList<Statement> oldStmts = md.getBody().get().getStatements();
 
@@ -63,6 +66,8 @@ public class TestCaseVisitor extends ModifierVisitor<Void> {
     }
 
     private void addAfter(MethodDeclaration md) {
+
+        if (!md.getBody().isPresent()) return;
 
         NodeList<Statement> oldStmts = md.getBody().get().getStatements();
 
