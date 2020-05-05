@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class PerformanceMetricsInjector {
     private File file;
@@ -39,9 +37,8 @@ public class PerformanceMetricsInjector {
     }
 
     public void writeToFile() throws IOException {
-        Path path = Paths.get("/home/christian/Desktop/bsc-sourcetransform/src/main/resources/TestFile.java");
         byte[] bytes = cu.toString().getBytes();
-        Files.write(path, bytes);
+        Files.write(file.toPath(), bytes);
     }
 
     public void writeToConsole() {
