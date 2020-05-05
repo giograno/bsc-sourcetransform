@@ -21,7 +21,13 @@ public class TestDirectoryVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (file.toString().endsWith(".java")) {
+            System.out.println("Inject measurement code to: ");
             System.out.println(file.toString());
+            PerformanceMetricsInjector pmi = new PerformanceMetricsInjector(file.toFile());
+            pmi.injectMeasurementCode();
+
+            //pmi.writeToConsole();
+            pmi.writeToFile();
         }
         return FileVisitResult.CONTINUE;
     }
