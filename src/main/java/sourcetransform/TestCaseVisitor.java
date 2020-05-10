@@ -27,6 +27,7 @@ public class TestCaseVisitor extends ModifierVisitor<Void> {
 
         md.setBody(new BlockStmt().setStatements(
                 new NodeList<Statement>(
+                        //StaticJavaParser.parseStatement("System.gc();"),
                         StaticJavaParser.parseStatement("MetricRegistry chribirreg = new MetricRegistry();"),
                         StaticJavaParser.parseStatement("MemoryUsageGaugeSet chribirmGs = new MemoryUsageGaugeSet();"),
                         StaticJavaParser.parseStatement("ThreadStatesGaugeSet chribirtGs = new ThreadStatesGaugeSet();"),
@@ -71,6 +72,11 @@ public class TestCaseVisitor extends ModifierVisitor<Void> {
 
         NodeList<Statement> oldStmts = md.getBody().get().getStatements();
 
+        Statement returnStmt = null;
+        if (oldStmts.getLast().isPresent() && oldStmts.getLast().get().isReturnStmt()) {
+            returnStmt = oldStmts.removeLast();
+        }
+
         oldStmts.addAll(new NodeList<Statement>(
                 StaticJavaParser.parseStatement("chribiroutput = chribiridentifier;"),
                 StaticJavaParser.parseStatement("chribiroutput = chribiroutput + \",after\";"),
@@ -89,6 +95,7 @@ public class TestCaseVisitor extends ModifierVisitor<Void> {
                 ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex"))))
         ));
 
+        if (returnStmt != null) oldStmts.addLast(returnStmt);
     }
 }
 
