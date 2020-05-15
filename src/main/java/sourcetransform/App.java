@@ -13,26 +13,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class App {
+    public static String absFilePath;
+    public static String iteration;
 
-    // args: path to a maven project
+    // args: path to a maven project, path to output file, iteration number
     public static void main(String[] args) {
 
-        File mvnProjDir = null;
-
-        //System.out.println(args[0]);
-        if (args.length == 3) {
-            mvnProjDir = new File(args[0]);
-            if (!mvnProjDir.isDirectory()) {
-                System.out.println("ERROR: Input is not a directory ...");
-                return;
-            }
-            Code.absFilePath = args[1];
-            Code.iteration = args[2];
-        }
         if (args.length != 3) {
             System.out.println("WARNING: Wrong number of args ...");
             return;
         }
+
+
+        File mvnProjDir = new File(args[0]);
+        if (!mvnProjDir.isDirectory()) {
+            System.out.println("ERROR: Input is not a directory ...");
+            return;
+        }
+
+        // Use static variables to share the argument to Code.java
+        absFilePath = args[1];
+        iteration = args[2].toString();
+
+
 
         // Travers the directory tree with a visitor to modify the test code
         TestDirectoryVisitor testDirVisitor = new TestDirectoryVisitor();

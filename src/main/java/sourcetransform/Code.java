@@ -7,9 +7,6 @@ import com.github.javaparser.ast.stmt.*;
 
 public class Code {
 
-    public static String absFilePath = "/home/christian/Desktop/measurement.csv";
-    public static String iteration = "5";
-
     public static NodeList<Statement> before = new NodeList<Statement>(
             //StaticJavaParser.parseStatement("System.gc();"),
             StaticJavaParser.parseStatement("chribirreg = new MetricRegistry();"),
@@ -58,9 +55,9 @@ public class Code {
                     ))
             ),
             new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                    StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+absFilePath+"\", true);"),
-                    StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+"+iteration+"+\",\"+chribiroutputBefore);"),
-                    StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+"+iteration+"+\",\"+chribiroutputAfter);"),
+                    StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.absFilePath+"\", true);"),
+                    StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+"+App.iteration+"+\",\"+chribiroutputBefore);"),
+                    StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+"+App.iteration+"+\",\"+chribiroutputAfter);"),
                     StaticJavaParser.parseStatement("chribircsvWriter.close();")
             ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex")))));
 

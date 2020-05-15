@@ -10,6 +10,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -18,30 +19,80 @@ public class PerformanceMetricsInjector {
     private File file;
     private CompilationUnit cu;
 
-    public static boolean hasBefore = false;
-    public static boolean hasAfter = false;
-    public static boolean extendsTestCase = false;
+    private TestData testData;
+
+//    public static boolean hasBefore = false;
+//    public static boolean hasAfter = false;
+//    public static boolean extendsTestCase = false;
+//    public static boolean hasSetUp = false;
+//    public static boolean hasTearDown = false;
 
     public PerformanceMetricsInjector(File file) throws FileNotFoundException {
         this.file = file;
         cu = StaticJavaParser.parse(this.file);
+        this.testData = new TestData();
     }
 
     public void injectMeasurementCode() {
+
+        // check if file is a test class
+        TestClassChecker testClassChecker = new TestClassChecker(testData);
+        testClassChecker.visit(cu, null);
+
+        if (!testData.isTestClass) {
+            try {
+                FileWriter myWriter = new FileWriter("/home/christian/Desktop/notworkinginjections.txt", true);
+                myWriter.append(cu.getPrimaryType().toString());
+                myWriter.close();
+                System.out.println("Successfully wrote to the file.");
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+            return;
+        }
+
         // import libraries
         importLibraries();
 
         // fields for gauges
         addFields();
 
-        // check existing before/after methods
-        AnnotatedMethodVisitor annotatedMethodVisitor = new AnnotatedMethodVisitor();
-        annotatedMethodVisitor.visit(cu, null);
 
-        // create fixtures
-        if (!hasBefore) createBefore(cu);
-        if (!hasAfter) createAfter(cu);
+
+        // if test class inherits 'TestCase' then the methods of super class must be overridden
+        if (testData.extendsTestCase) {
+            // check for fixtures and modify them
+            NonAnnotationFixtureChecker nafc = new NonAnnotationFixtureChecker(testData);
+            nafc.visit(cu, null);
+
+            // create fixtures
+            if (!testData.hasSetup) createSetUp(cu);
+            if (!testData.hasTearDown) createTearDown(cu);
+
+        } else if (testData.useAnnotations){ // test class uses annotations
+            // check existing before/after methods and modify them
+            AnnotationChecker annotationChecker = new AnnotationChecker(testData);
+            annotationChecker.visit(cu, null);
+
+            // create fixtures
+            if (!testData.hasBefore) createBefore(cu);
+            if (!testData.hasAfter) createAfter(cu);
+        }
+
     }
+
+    private boolean isNotValidTestClass() {
+        boolean res = false;
+        if (!cu.getPrimaryType().isPresent()) res = true;
+        else if (cu.getPrimaryType().get().isAnnotationDeclaration()) res = true;
+        else if (cu.getPrimaryType().get().isEnumDeclaration()) res = true;
+        else if (cu.getPrimaryType().get().isEnumConstantDeclaration()) res = true;
+
+
+        return res;
+    }
+
 
     private void addFields() {
 
@@ -73,6 +124,22 @@ public class PerformanceMetricsInjector {
         cu.addImport("org.junit.Before", false, false);
         cu.addImport("org.junit.BeforeClass", false, false);
         cu.addImport("org.junit.After", false, false);
+    }
+
+    private void createSetUp(CompilationUnit cu) {
+        if (!cu.getPrimaryType().isPresent()) return;
+        cu.getPrimaryType().get().addMethod("setUp", Modifier.Keyword.PUBLIC)
+                .setAnnotations(new NodeList<AnnotationExpr>(new MarkerAnnotationExpr().setName("Override")))
+                .setType("void")
+                .setBody(new BlockStmt().setStatements(Code.before));
+    }
+
+    private void createTearDown(CompilationUnit cu) {
+        if (!cu.getPrimaryType().isPresent()) return;
+        cu.getPrimaryType().get().addMethod("tearDown", Modifier.Keyword.PUBLIC)
+                .setAnnotations(new NodeList<AnnotationExpr>(new MarkerAnnotationExpr().setName("Override")))
+                .setType("void")
+                .setBody(new BlockStmt().setStatements(Code.after));
     }
 
     private void createBefore(CompilationUnit cu) {
