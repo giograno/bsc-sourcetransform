@@ -61,7 +61,16 @@ public class PerformanceMetricsInjector {
 
 
         // if test class inherits 'TestCase' then the methods of super class must be overridden
-        if (testData.extendsTestCase) {
+        if (testData.useAnnotations){ // test class uses annotations
+            // check existing before/after methods and modify them
+            AnnotationChecker annotationChecker = new AnnotationChecker(testData);
+            annotationChecker.visit(cu, null);
+
+            // create fixtures
+            if (!testData.hasBefore) createBefore(cu);
+            if (!testData.hasAfter) createAfter(cu);
+        }
+        else if (testData.extendsTestCase) {
             // check for fixtures and modify them
             NonAnnotationFixtureChecker nafc = new NonAnnotationFixtureChecker(testData);
             nafc.visit(cu, null);
@@ -70,14 +79,6 @@ public class PerformanceMetricsInjector {
             if (!testData.hasSetup) createSetUp(cu);
             if (!testData.hasTearDown) createTearDown(cu);
 
-        } else if (testData.useAnnotations){ // test class uses annotations
-            // check existing before/after methods and modify them
-            AnnotationChecker annotationChecker = new AnnotationChecker(testData);
-            annotationChecker.visit(cu, null);
-
-            // create fixtures
-            if (!testData.hasBefore) createBefore(cu);
-            if (!testData.hasAfter) createAfter(cu);
         }
 
     }
