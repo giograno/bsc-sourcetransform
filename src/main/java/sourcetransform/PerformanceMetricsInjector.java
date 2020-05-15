@@ -40,15 +40,15 @@ public class PerformanceMetricsInjector {
         testClassChecker.visit(cu, null);
 
         if (!testData.isTestClass) {
-            try {
-                FileWriter myWriter = new FileWriter("/home/christian/Desktop/notworkinginjections.txt", true);
-                myWriter.append(cu.getPrimaryType().toString());
-                myWriter.close();
-                System.out.println("Successfully wrote to the file.");
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
+//            try {
+//                FileWriter myWriter = new FileWriter("/home/christian/Desktop/notworkinginjections.txt", true);
+//                myWriter.append(cu.getPrimaryType().toString());
+//                myWriter.close();
+//                System.out.println("Successfully wrote to the file.");
+//            } catch (IOException e) {
+//                System.out.println("An error occurred.");
+//                e.printStackTrace();
+//            }
             return;
         }
 
