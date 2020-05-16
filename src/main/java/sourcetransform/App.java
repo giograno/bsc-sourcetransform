@@ -13,13 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class App {
-    public static String absFilePath;
+    public static String outputMeasurementPath;
+    public static String projectName;
+    public static String commit_hash;
     public static String iteration;
 
-    // args: path to a maven project, path to output file, iteration number
+    // args: path to a maven project, path to output file, project name, commit hash, iteration number
     public static void main(String[] args) {
 
-        if (args.length != 3) {
+        if (args.length != 5) {
             System.out.println("WARNING: Wrong number of args ...");
             return;
         }
@@ -32,8 +34,10 @@ public class App {
         }
 
         // Use static variables to share the argument to Code.java
-        absFilePath = args[1];
-        iteration = args[2].toString();
+        outputMeasurementPath = args[1].toString();
+        projectName = args[2].toString();
+        commit_hash = args[3].toString();
+        iteration = args[4].toString();
 
 
 

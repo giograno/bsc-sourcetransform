@@ -114,7 +114,7 @@ public class AnnotationChecker extends ModifierVisitor<Void> {
                                 ))
                         ),
                         new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                                StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.absFilePath+"\", true);"),
+                                StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.outputMeasurementPath +"\", true);"),
                                 StaticJavaParser.parseStatement("chribircsvWriter.append(chribiroutput+\",\"+"+App.iteration+"+\",U\");"),
                                 StaticJavaParser.parseStatement("chribircsvWriter.close();")
                         ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex"))))
@@ -137,7 +137,7 @@ public class AnnotationChecker extends ModifierVisitor<Void> {
                                         ))
                                 ),
                                 new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                                        StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.absFilePath+"\", true);"),
+                                        StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.outputMeasurementPath +"\", true);"),
                                         StaticJavaParser.parseStatement("chribircsvWriter.append(chribiroutput+\",\"+"+App.iteration+"+\",F\");"),
                                         StaticJavaParser.parseStatement("chribircsvWriter.close();")
                                 ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex"))))
@@ -159,7 +159,7 @@ public class AnnotationChecker extends ModifierVisitor<Void> {
                                         ))
                                 ),
                                 new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                                        StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.absFilePath+"\", true);"),
+                                        StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.outputMeasurementPath +"\", true);"),
                                         StaticJavaParser.parseStatement("chribircsvWriter.append(chribiroutput+\",\"+"+App.iteration+"+\",P\");"),
                                         StaticJavaParser.parseStatement("chribircsvWriter.close();")
                                 ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex")))))
