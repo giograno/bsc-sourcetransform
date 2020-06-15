@@ -11,9 +11,8 @@ This respository contains the program which modifies the test cases of a maven p
 ```
 mvn clean package
 ```
-2. Ensure you are on the same path as your target project
-3. Modify the test code by running the application:
+2. Modify the test code by running the application:
 ```
-java -jar </path/to/jar> </path/to/measurement/file> <project_name> <commit_hash> <iteration>
+java -jar </path/to/jar> </path/to/target/project> </path/to/measurement/file> <project_name> <commit_hash> <iteration>
 ```
 
