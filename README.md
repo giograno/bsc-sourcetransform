@@ -4,7 +4,6 @@ This respository contains the program which modifies the test cases of a maven p
 # Requirements
 - Java 8
 - Maven
-- Specific dropwizard dependendies (see `pom.xml`)
 
 # Usage
 1. Package the project into a fat jar by the following command:
