@@ -120,6 +120,7 @@ public class PerformanceMetricsInjector {
         cu.addImport("com.codahale.metrics.jvm.MemoryUsageGaugeSet", false, false);
         cu.addImport("com.codahale.metrics.jvm.ThreadStatesGaugeSet", false, false);
         cu.addImport("java.io.FileWriter", false, false);
+        cu.addImport("java.io.BufferedWriter", false, false);
         cu.addImport("java.lang.invoke.MethodHandles", false, false);
         cu.addImport("java.util.Iterator", false, false);
         cu.addImport("org.junit.Before", false, false);

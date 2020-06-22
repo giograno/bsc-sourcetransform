@@ -55,7 +55,7 @@ public class Code {
                     ))
             ),
             new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                    StaticJavaParser.parseStatement("FileWriter chribircsvWriter = new FileWriter(\""+App.outputMeasurementPath +"\", true);"),
+                    StaticJavaParser.parseStatement("BufferedWriter chribircsvWriter = new BufferedWriter(new FileWriter(\""+App.outputMeasurementPath +"\", true));"),
                     StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+\""+App.projectName+"\"+\",\"+\""+App.commit_hash+"\"+\",\"+\""+App.iteration+"\"+\",\"+chribiroutputBefore);"),
                     StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+\""+App.projectName+"\"+\",\"+\""+App.commit_hash+"\"+\",\"+\""+App.iteration+"\"+\",\"+chribiroutputAfter);"),
                     StaticJavaParser.parseStatement("chribircsvWriter.close();")
