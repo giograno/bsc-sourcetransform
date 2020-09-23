@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
-
 public class PerformanceMetricsInjector {
     private File file;
     private CompilationUnit cu;
@@ -76,15 +75,6 @@ public class PerformanceMetricsInjector {
             if (!testData.hasTearDown) createTearDown(cu);
 
         }
-    }
-
-    private boolean isNotValidTestClass() {
-        boolean res = false;
-        if (!cu.getPrimaryType().isPresent()) res = true;
-        else if (cu.getPrimaryType().get().isAnnotationDeclaration()) res = true;
-        else if (cu.getPrimaryType().get().isEnumDeclaration()) res = true;
-        else if (cu.getPrimaryType().get().isEnumConstantDeclaration()) res = true;
-        return res;
     }
 
     private void addFields() {
