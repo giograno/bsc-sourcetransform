@@ -29,6 +29,7 @@ public class AnnotationChecker extends ModifierVisitor<Void> {
         } else if (md.getAnnotationByName("Test").isPresent()) {
             appendWithin(md);
         }
+        // todo: those methods are commented out; let's check whether we can remove them
         //addBefore(md);
         //addAfter(md);
         //addMetricsInitAndWriteStatements(md);

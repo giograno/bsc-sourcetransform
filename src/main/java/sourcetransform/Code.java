@@ -6,9 +6,13 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.stmt.*;
 
 public class Code {
+    public static NodeList<Statement> before = new NodeList<>(
 
-    public static NodeList<Statement> before = new NodeList<Statement>(
             //StaticJavaParser.parseStatement("System.gc();"),
+            // reading preferences
+            StaticJavaParser.parseStatement("Preferences prefs = Preferences.userRoot();"),
+            StaticJavaParser.parseStatement("currentRound = prefs.getInt(\"iDFlakies-round\", 0);"),
+
             StaticJavaParser.parseStatement("chribirreg = new MetricRegistry();"),
             StaticJavaParser.parseStatement("chribirmGs = new MemoryUsageGaugeSet();"),
             StaticJavaParser.parseStatement("chribirtGs = new ThreadStatesGaugeSet();"),
@@ -21,11 +25,10 @@ public class Code {
             StaticJavaParser.parseStatement("chribirreg.registerAll(chribirjvmGs);"),
             StaticJavaParser.parseStatement("chribirreg.registerAll(chribirgMs);"),
 
-
             StaticJavaParser.parseStatement("chribiroutputBefore = \"before\";"),
             StaticJavaParser.parseStatement("Iterator<String> chribiriterator = chribirreg.getGauges().keySet().iterator();"),
             new WhileStmt().setCondition(StaticJavaParser.parseExpression("chribiriterator.hasNext()")).setBody(
-                    new BlockStmt().setStatements(new NodeList<Statement>(
+                    new BlockStmt().setStatements(new NodeList<>(
                             StaticJavaParser.parseStatement("String chribirkey   = chribiriterator.next();"),
                             StaticJavaParser.parseStatement("String chribirvalue = chribirreg.getGauges().get(chribirkey).getValue().toString();"),
                             StaticJavaParser.parseStatement("chribiroutputBefore = chribiroutputBefore + \",\" + chribirvalue;")
@@ -34,7 +37,7 @@ public class Code {
     );
 
 
-    public static NodeList<Statement> within = new NodeList<Statement>(
+    public static NodeList<Statement> within = new NodeList<>(
             StaticJavaParser.parseStatement("StackTraceElement[] chribirstacktrace = Thread.currentThread().getStackTrace();"),
             StaticJavaParser.parseStatement("StackTraceElement chribire = chribirstacktrace[1];"),
             StaticJavaParser.parseStatement("String chribirmethodName = chribire.getMethodName();"),
@@ -44,21 +47,33 @@ public class Code {
     );
 
 
-    public static NodeList<Statement> after = new NodeList<Statement>(
+    public static NodeList<Statement> after = new NodeList<>(
             StaticJavaParser.parseStatement("chribiroutputAfter = \"after\";"),
-            StaticJavaParser.parseStatement("Iterator<String> chribiriterator = chribirreg.getGauges().keySet().iterator();"),
+            StaticJavaParser.parseStatement("Iterator<String> chribiriterator = " +
+                    "chribirreg.getGauges().keySet().iterator();"),
             new WhileStmt().setCondition(StaticJavaParser.parseExpression("chribiriterator.hasNext()")).setBody(
-                    new BlockStmt().setStatements(new NodeList<Statement>(
-                            StaticJavaParser.parseStatement("String chribirkey   = chribiriterator.next();"),
-                            StaticJavaParser.parseStatement("String chribirvalue = chribirreg.getGauges().get(chribirkey).getValue().toString();"),
-                            StaticJavaParser.parseStatement("chribiroutputAfter = chribiroutputAfter + \",\" + chribirvalue;")
+                    new BlockStmt().setStatements(new NodeList<>(
+                            StaticJavaParser
+                                    .parseStatement("String chribirkey   = chribiriterator.next();"),
+                            StaticJavaParser
+                                    .parseStatement("String chribirvalue = " +
+                                            "chribirreg.getGauges().get(chribirkey).getValue().toString();"),
+                            StaticJavaParser
+                                    .parseStatement("chribiroutputAfter = chribiroutputAfter + \",\" + chribirvalue;")
                     ))
             ),
-            new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<Statement>(
-                    StaticJavaParser.parseStatement("BufferedWriter chribircsvWriter = new BufferedWriter(new FileWriter(\""+App.outputMeasurementPath +"\", true));"),
-                    StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+\""+App.projectName+"\"+\",\"+\""+App.commit_hash+"\"+\",\"+\""+App.currentIteration +"\"+\",\"+chribiroutputBefore);"),
-                    StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+\""+App.projectName+"\"+\",\"+\""+App.commit_hash+"\"+\",\"+\""+App.currentIteration +"\"+\",\"+chribiroutputAfter);"),
+            new TryStmt().setTryBlock(new BlockStmt().setStatements(new NodeList<>(
+                    StaticJavaParser.parseStatement("BufferedWriter chribircsvWriter = " +
+                            "new BufferedWriter(new FileWriter(\"" + App.outputMeasurementPath + "\", true));"),
+                    StaticJavaParser.parseStatement("chribircsvWriter." +
+                            "append(chribiridentifier+\",\"+\"" + App.projectName + "\"+\",\"+\"" +
+                            App.commit_hash + "\"+\",\"+ Integer.toString(currentRound) +\",\"+chribiroutputBefore);"),
+
+                    StaticJavaParser.parseStatement("chribircsvWriter.append(chribiridentifier+\",\"+\""
+                            + App.projectName + "\"+\",\"+\"" + App.commit_hash
+                            + "\"+\",\"+ Integer.toString(currentRound) +\",\"+chribiroutputAfter);"),
                     StaticJavaParser.parseStatement("chribircsvWriter.close();")
-            ))).setCatchClauses(new NodeList<CatchClause>(new CatchClause().setParameter(new Parameter().setType("Exception").setName("chribirex")))));
+            ))).setCatchClauses(new NodeList<>(new CatchClause()
+                    .setParameter(new Parameter().setType("Exception").setName("chribirex")))));
 
 }

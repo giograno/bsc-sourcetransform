@@ -4,13 +4,11 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -59,9 +57,8 @@ public class PerformanceMetricsInjector {
         addFields();
 
 
-
         // if test class inherits 'TestCase' then the methods of super class must be overridden
-        if (testData.useAnnotations){ // test class uses annotations
+        if (testData.useAnnotations) { // test class uses annotations
             // check existing before/after methods and modify them
             AnnotationChecker annotationChecker = new AnnotationChecker(testData);
             annotationChecker.visit(cu, null);
@@ -69,8 +66,7 @@ public class PerformanceMetricsInjector {
             // create fixtures
             if (!testData.hasBefore) createBefore(cu);
             if (!testData.hasAfter) createAfter(cu);
-        }
-        else if (testData.extendsTestCase) {
+        } else if (testData.extendsTestCase) {
             // check for fixtures and modify them
             NonAnnotationFixtureChecker nafc = new NonAnnotationFixtureChecker(testData);
             nafc.visit(cu, null);
@@ -80,7 +76,6 @@ public class PerformanceMetricsInjector {
             if (!testData.hasTearDown) createTearDown(cu);
 
         }
-
     }
 
     private boolean isNotValidTestClass() {
@@ -89,11 +84,8 @@ public class PerformanceMetricsInjector {
         else if (cu.getPrimaryType().get().isAnnotationDeclaration()) res = true;
         else if (cu.getPrimaryType().get().isEnumDeclaration()) res = true;
         else if (cu.getPrimaryType().get().isEnumConstantDeclaration()) res = true;
-
-
         return res;
     }
-
 
     private void addFields() {
 
@@ -107,7 +99,7 @@ public class PerformanceMetricsInjector {
         cu.getPrimaryType().get().addField("String", "chribiridentifier", Modifier.Keyword.PRIVATE);
         cu.getPrimaryType().get().addField("String", "chribiroutputBefore", Modifier.Keyword.PRIVATE);
         cu.getPrimaryType().get().addField("String", "chribiroutputAfter", Modifier.Keyword.PRIVATE);
-
+        cu.getPrimaryType().get().addField("int", "currentRound", Modifier.Keyword.PRIVATE);
     }
 
     private void importLibraries() {
@@ -126,12 +118,13 @@ public class PerformanceMetricsInjector {
         cu.addImport("org.junit.Before", false, false);
         cu.addImport("org.junit.BeforeClass", false, false);
         cu.addImport("org.junit.After", false, false);
+        cu.addImport("java.util.prefs.Preferences", false, false);
     }
 
     private void createSetUp(CompilationUnit cu) {
         if (!cu.getPrimaryType().isPresent()) return;
         cu.getPrimaryType().get().addMethod("setUp", Modifier.Keyword.PUBLIC)
-                .setAnnotations(new NodeList<AnnotationExpr>(new MarkerAnnotationExpr().setName("Override")))
+                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName("Override")))
                 .setType("void")
                 .setBody(new BlockStmt().setStatements(Code.before));
     }
@@ -139,7 +132,7 @@ public class PerformanceMetricsInjector {
     private void createTearDown(CompilationUnit cu) {
         if (!cu.getPrimaryType().isPresent()) return;
         cu.getPrimaryType().get().addMethod("tearDown", Modifier.Keyword.PUBLIC)
-                .setAnnotations(new NodeList<AnnotationExpr>(new MarkerAnnotationExpr().setName("Override")))
+                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName("Override")))
                 .setType("void")
                 .setBody(new BlockStmt().setStatements(Code.after));
     }
@@ -147,7 +140,7 @@ public class PerformanceMetricsInjector {
     private void createBefore(CompilationUnit cu) {
         if (!cu.getPrimaryType().isPresent()) return;
         cu.getPrimaryType().get().addMethod("myBefore", Modifier.Keyword.PUBLIC)
-                .setAnnotations(new NodeList<AnnotationExpr>(new MarkerAnnotationExpr().setName("Before")))
+                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName("Before")))
                 .setType("void")
                 .setBody(new BlockStmt().setStatements(Code.before));
     }
@@ -155,7 +148,7 @@ public class PerformanceMetricsInjector {
     private void createAfter(CompilationUnit cu) {
         if (!cu.getPrimaryType().isPresent()) return;
         cu.getPrimaryType().get().addMethod("myAfter", Modifier.Keyword.PUBLIC)
-                .setAnnotations(new NodeList<AnnotationExpr>(new MarkerAnnotationExpr().setName("After")))
+                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName("After")))
                 .setType("void")
                 .setBody(new BlockStmt().setStatements(Code.after));
     }
