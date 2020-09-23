@@ -11,21 +11,23 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class App {
     public static String outputMeasurementPath;
     public static String projectName;
     public static String commit_hash;
-    public static String iteration;
+    public static int currentIteration;
+    public final static String CURRENT_ROUND = "iDFlakies-round";
 
-    // args: path to a maven project, path to output file, project name, commit hash, iteration number
+    // args: path to a maven project, path to output file, project name, commit hash
+    // iteration number get now read via Java preferences
     public static void main(String[] args) {
 
-        if (args.length != 5) {
+        if (args.length != 4) {
             System.out.println("WARNING: Wrong number of args ...");
             return;
         }
-
 
         File mvnProjDir = new File(args[0]);
         if (!mvnProjDir.isDirectory()) {
@@ -34,12 +36,13 @@ public class App {
         }
 
         // Use static variables to share the argument to Code.java
-        outputMeasurementPath = args[1].toString();
-        projectName = args[2].toString();
-        commit_hash = args[3].toString();
-        iteration = args[4].toString();
+        outputMeasurementPath = args[1];
+        projectName = args[2];
+        commit_hash = args[3];
 
-
+        // reading Java preferences for current iteration
+        Preferences prefs = Preferences.userRoot();
+        currentIteration = prefs.getInt(CURRENT_ROUND, -1);
 
         // Travers the directory tree with a visitor to modify the test code
         TestDirectoryVisitor testDirVisitor = new TestDirectoryVisitor();
@@ -51,12 +54,10 @@ public class App {
 
         // Add metric dependencies to the pom
         try {
-            addMetricDepsToPom(new File(mvnProjDir.getAbsolutePath()+"/pom.xml"));
+            addMetricDepsToPom(new File(mvnProjDir.getAbsolutePath() + "/pom.xml"));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     private static void addMetricDepsToPom(File pomFile) throws IOException, XmlPullParserException {
@@ -81,17 +82,15 @@ public class App {
         MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
         Model model = xpp3Reader.read(reader);
 
-        List<Dependency> dependencyList = new ArrayList<Dependency>(model.getDependencies());
+        List<Dependency> dependencyList = new ArrayList<>(model.getDependencies());
         dependencyList.add(metricsCore);
         dependencyList.add(metricsJvm);
-
 
         model.setDependencies(dependencyList);
 
         MavenXpp3Writer xpp3Writer = new MavenXpp3Writer();
 
         xpp3Writer.write(new FileWriter(pomFile), model);
-
 
         reader.close();
     }
