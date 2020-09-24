@@ -43,9 +43,20 @@ public class App {
         // reading Java preferences for current iteration
         Preferences prefs = Preferences.userRoot();
         currentIteration = prefs.getInt(CURRENT_ROUND, -1);
+        File pomFile = new File(mvnProjDir.getAbsolutePath() + "/pom.xml");
+        Model pomModel = null;
+        try {
+            pomModel = getModel(pomFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        }
+        boolean isJUnit5 = pomModel.getDependencies().stream().map(dependency -> dependency.getGroupId())
+                .anyMatch(d -> d.equals("org.junit.jupiter"));
 
         // Travers the directory tree with a visitor to modify the test code
-        TestDirectoryVisitor testDirVisitor = new TestDirectoryVisitor();
+        TestDirectoryVisitor testDirVisitor = new TestDirectoryVisitor(isJUnit5);
         try {
             Files.walkFileTree(mvnProjDir.toPath(), testDirVisitor);
         } catch (Exception e) {
@@ -54,13 +65,20 @@ public class App {
 
         // Add metric dependencies to the pom
         try {
-            addMetricDepsToPom(new File(mvnProjDir.getAbsolutePath() + "/pom.xml"));
+            addMetricDepsToPom(pomModel, pomFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void addMetricDepsToPom(File pomFile) throws IOException, XmlPullParserException {
+    private static Model getModel(File pomFile) throws IOException, XmlPullParserException {
+        Reader reader = new FileReader(pomFile);
+        MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
+        Model model = xpp3Reader.read(reader);
+        return model;
+    }
+
+    private static void addMetricDepsToPom(Model model, File pomFile) throws IOException {
         System.out.println("Add dependencies to pom: ");
         System.out.println(pomFile.getAbsolutePath());
 
@@ -79,8 +97,6 @@ public class App {
 
         // setup maven pom model
         Reader reader = new FileReader(pomFile);
-        MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
-        Model model = xpp3Reader.read(reader);
 
         List<Dependency> dependencyList = new ArrayList<>(model.getDependencies());
         dependencyList.add(metricsCore);

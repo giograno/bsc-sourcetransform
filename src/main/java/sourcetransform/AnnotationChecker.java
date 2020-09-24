@@ -17,10 +17,10 @@ public class AnnotationChecker extends ModifierVisitor<Void> {
     @Override
     public Visitable visit(MethodDeclaration md, Void arg) {
         super.visit(md, arg);
-        if (md.getAnnotationByName("Before").isPresent()) {
+        if (md.getAnnotationByName("Before").isPresent() || md.getAnnotationByName("BeforeEach").isPresent()) {
             testData.hasBefore = true;
             appendBefore(md);
-        } else if (md.getAnnotationByName("After").isPresent()) {
+        } else if (md.getAnnotationByName("After").isPresent() || md.getAnnotationByName("AfterEach").isPresent()) {
             testData.hasAfter = true;
             appendAfter(md);
         } else if (md.getAnnotationByName("Test").isPresent()) {

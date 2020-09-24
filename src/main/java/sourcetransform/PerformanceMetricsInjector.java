@@ -17,17 +17,17 @@ public class PerformanceMetricsInjector {
     private CompilationUnit cu;
 
     private TestData testData;
+    private boolean isJunit5;
+    private String beforeAnnotation;
+    private String afterAnnotation;
 
-//    public static boolean hasBefore = false;
-//    public static boolean hasAfter = false;
-//    public static boolean extendsTestCase = false;
-//    public static boolean hasSetUp = false;
-//    public static boolean hasTearDown = false;
-
-    public PerformanceMetricsInjector(File file) throws FileNotFoundException {
+    public PerformanceMetricsInjector(File file, boolean isJunit5) throws FileNotFoundException {
         this.file = file;
+        this.isJunit5 = isJunit5;
         cu = StaticJavaParser.parse(this.file);
         this.testData = new TestData();
+        this.beforeAnnotation = isJunit5 ? "BeforeEach" : "Before";
+        this.afterAnnotation = isJunit5 ? "AfterEach" : "After";
     }
 
     public void injectMeasurementCode() {
@@ -73,7 +73,6 @@ public class PerformanceMetricsInjector {
             // create fixtures
             if (!testData.hasSetup) createSetUp(cu);
             if (!testData.hasTearDown) createTearDown(cu);
-
         }
     }
 
@@ -105,9 +104,17 @@ public class PerformanceMetricsInjector {
         cu.addImport("java.io.BufferedWriter", false, false);
         cu.addImport("java.lang.invoke.MethodHandles", false, false);
         cu.addImport("java.util.Iterator", false, false);
-        cu.addImport("org.junit.Before", false, false);
-        cu.addImport("org.junit.BeforeClass", false, false);
-        cu.addImport("org.junit.After", false, false);
+        if (!isJunit5) {
+            cu.addImport("org.junit.Before", false, false);
+            cu.addImport("org.junit.BeforeClass", false, false);
+            cu.addImport("org.junit.After", false, false);
+        } else {
+            cu.addImport("org.junit.jupiter.api.BeforeEach", false, false);
+            cu.addImport("org.junit.jupiter.api.BeforeAll", false, false);
+            cu.addImport("org.junit.jupiter.api.AfterEach", false, false);
+        }
+        // ******
+
         cu.addImport("java.util.prefs.Preferences", false, false);
     }
 
@@ -130,7 +137,7 @@ public class PerformanceMetricsInjector {
     private void createBefore(CompilationUnit cu) {
         if (!cu.getPrimaryType().isPresent()) return;
         cu.getPrimaryType().get().addMethod("myBefore", Modifier.Keyword.PUBLIC)
-                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName("Before")))
+                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName(beforeAnnotation)))
                 .setType("void")
                 .setBody(new BlockStmt().setStatements(Code.before));
     }
@@ -138,7 +145,7 @@ public class PerformanceMetricsInjector {
     private void createAfter(CompilationUnit cu) {
         if (!cu.getPrimaryType().isPresent()) return;
         cu.getPrimaryType().get().addMethod("myAfter", Modifier.Keyword.PUBLIC)
-                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName("After")))
+                .setAnnotations(new NodeList<>(new MarkerAnnotationExpr().setName(afterAnnotation)))
                 .setType("void")
                 .setBody(new BlockStmt().setStatements(Code.after));
     }
@@ -151,6 +158,5 @@ public class PerformanceMetricsInjector {
     public void writeToConsole() {
         System.out.println(cu.toString());
     }
-
 }
 

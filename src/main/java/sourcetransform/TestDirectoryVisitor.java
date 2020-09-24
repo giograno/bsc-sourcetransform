@@ -7,6 +7,13 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class TestDirectoryVisitor implements FileVisitor<Path> {
+
+    private boolean isJunit5;
+
+    public TestDirectoryVisitor(boolean isJunit5) {
+        this.isJunit5 = isJunit5;
+    }
+
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         // avoid traversing src/main/
@@ -23,7 +30,7 @@ public class TestDirectoryVisitor implements FileVisitor<Path> {
         if (file.toString().endsWith(".java")) {
             System.out.println("Inject measurement code to: ");
             System.out.println(file.toString());
-            PerformanceMetricsInjector pmi = new PerformanceMetricsInjector(file.toFile());
+            PerformanceMetricsInjector pmi = new PerformanceMetricsInjector(file.toFile(), isJunit5);
             pmi.injectMeasurementCode();
 
             //pmi.writeToConsole();
@@ -33,7 +40,7 @@ public class TestDirectoryVisitor implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+    public FileVisitResult visitFileFailed(Path file, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 
