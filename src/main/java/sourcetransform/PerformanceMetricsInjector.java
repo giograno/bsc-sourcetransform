@@ -85,7 +85,7 @@ public class PerformanceMetricsInjector {
         cu.getPrimaryType().get().addField("ClassLoadingGaugeSet", "chribircGs", Modifier.Keyword.PRIVATE);
         cu.getPrimaryType().get().addField("JvmAttributeGaugeSet", "chribirjvmGs", Modifier.Keyword.PRIVATE);
         cu.getPrimaryType().get().addField("GarbageCollectorMetricSet", "chribirgMs", Modifier.Keyword.PRIVATE);
-        cu.getPrimaryType().get().addField("String", "chribiridentifier", Modifier.Keyword.PRIVATE);
+        cu.getPrimaryType().get().addField("String", "chribiridentifier", Modifier.Keyword.PRIVATE, Modifier.Keyword.STATIC);
         cu.getPrimaryType().get().addField("String", "chribiroutputBefore", Modifier.Keyword.PRIVATE);
         cu.getPrimaryType().get().addField("String", "chribiroutputAfter", Modifier.Keyword.PRIVATE);
         cu.getPrimaryType().get().addField("int", "currentRound", Modifier.Keyword.PRIVATE);
