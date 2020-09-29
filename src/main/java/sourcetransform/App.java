@@ -63,12 +63,12 @@ public class App {
             e.printStackTrace();
         }
 
-        // Add metric dependencies to the pom
-        try {
-            addMetricDepsToPom(pomModel, pomFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        Add metric dependencies to the pom (this is now done through iDFlakies
+//        try {
+//            addMetricDepsToPom(pomModel, pomFile);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     private static Model getModel(File pomFile) throws IOException, XmlPullParserException {
@@ -78,6 +78,7 @@ public class App {
         return model;
     }
 
+    @Deprecated
     private static void addMetricDepsToPom(Model model, File pomFile) throws IOException {
         System.out.println("Add dependencies to pom: ");
         System.out.println(pomFile.getAbsolutePath());
